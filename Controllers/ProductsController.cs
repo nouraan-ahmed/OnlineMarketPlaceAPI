@@ -52,5 +52,15 @@ namespace MarketplaceAPI.Controllers
             }
             return Ok(product);
         }
+
+
+/*        [HttpPost]
+        public IActionResult CreateProduct([FromBody]Product product)
+        {
+            _db.Product.Add(product);
+            _db.SaveChanges();
+            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+        }*/
+
     }
 }
