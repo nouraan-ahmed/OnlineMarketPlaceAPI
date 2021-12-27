@@ -38,6 +38,10 @@ namespace MarketplaceAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MarketplaceAPI", Version = "v1" });
             });
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(240);//You can set Time (4hrs)   
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +57,7 @@ namespace MarketplaceAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthorization();
 

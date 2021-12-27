@@ -22,6 +22,8 @@ namespace MarketplaceAPI.Controllers
         {
             _db.User.Add(user);
             _db.SaveChanges();
+            HttpContext.Session.SetInt32("Reg_Id", user.Id);
+
             return Ok("Successfully Registered");
         }
     }
