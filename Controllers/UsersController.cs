@@ -97,6 +97,40 @@ namespace MarketplaceAPI.Controllers
             HttpContext.Session.SetString("User_Email", null);
             return Ok("Logged Out Successfully");
         }
+        [HttpPost]
+        [Route("Profile")]
+        public IActionResult Profile(User usm)
+        {
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            string User_Email = HttpContext.Session.GetString("User_Email");
+            var User_id = _db.User.Where(p => p.Email == User_Email).Select(o => o.Id).FirstOrDefault();
+            var User_status = _db.Product.Where(p => p.User_Id == Reg_Id).Select(o => o.Status).FirstOrDefault();
+           // ViewData["User_status"] = User_status;
+           // ViewBag.status = ViewData["User_status"];
+            string Reg_Name = _db.User.Where(l => l.Id == Reg_Id).Select(i => i.Name).FirstOrDefault();
+            string Reg_phone = _db.User.Where(l => l.Id == Reg_Id).Select(i => i.Phone).FirstOrDefault();
+            string Reg_email = _db.User.Where(l => l.Id == Reg_Id).Select(i => i.Email).FirstOrDefault();
+            double Reg_wallet = _db.User.Where(l => l.Id == Reg_Id).Select(i => i.Wallet).FirstOrDefault();
+            //ViewData["Reg_wallet"] = Reg_wallet;
+            //ViewBag.wallet = ViewData["Reg_wallet"];
+            //ViewData["id_get"] = User_id;
+            //ViewBag.Id = ViewData["id_get"];
+            //ViewData["Reg_phone"] = Reg_phone;
+            //ViewBag.phone = ViewData["Reg_phone"];
+            //ViewData["Reg_email"] = Reg_email;
+            //ViewBag.email = ViewData["Reg_email"];
+
+            //ViewBag.Name = Reg_Name;
+            List<Product> objList = new List<Product>();
+            objList = (from s in _db.Product select s).Where(p => p.User_Id == Reg_Id).ToList();
+           
+            //ViewData["products"] = objList;
+            //// ViewData["products"] = productList;
+            //var otherItems = _db.Product.Where(a => a.SecondaryUser == Reg_Id).Select(a => a).ToList();
+            //ViewData["otherStoresProducts"] = otherItems;
+            return Ok("Profile User information");
+
+        }
 
 
     }
