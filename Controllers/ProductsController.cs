@@ -27,6 +27,40 @@ namespace MarketplaceAPI.Controllers
             return Ok(Products);
         }
 
+
+        [HttpGet("Transactions")]
+        public IActionResult Trans()
+        {
+            var trans = _db.Transaction.ToList();
+            return Ok(trans);
+        }
+
+
+        [HttpGet("Print Report")]
+        public IActionResult PrintReport(int id)
+        {
+            if (_db.Product.Find(id) == null)
+            {
+                return NotFound();
+            }
+
+            int d = _db.Transaction.Where(p => p.Product_Id == id).Select(o => o.Id).FirstOrDefault();
+            Transaction inst = _db.Transaction.Find(d);
+            TransactionModel tran = new TransactionModel();
+            tran.Buyer_Name = _db.User.Where(p => p.Id == inst.Seller_Id).Select(o => o.Name).FirstOrDefault();
+            tran.Seller_Name = _db.User.Where(p => p.Id == inst.User_Id).Select(o => o.Name).FirstOrDefault();
+            tran.Product_Name = _db.Product.Where(p => p.Id == inst.Product_Id).Select(o => o.Name).FirstOrDefault();
+            tran.Status = inst.Status;
+            if (inst.Id == 0)
+            {
+                return NotFound();
+            }
+
+                return Ok(tran);
+           
+        }
+
+
         //get the products of other users (not the logged in one)
         [HttpGet("Others")]
         public IActionResult GetOthersAllProducts()
