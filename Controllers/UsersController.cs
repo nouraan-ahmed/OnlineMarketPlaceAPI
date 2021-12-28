@@ -59,6 +59,13 @@ namespace MarketplaceAPI.Controllers
 
         }
 
+        [HttpGet("Show Users")]
+        public ActionResult ShowUsers()
+        {
+            var users = _db.User.ToList();
+            return Ok(users);
+        }
+
 
         [HttpPost]
         [Route("Login")]
