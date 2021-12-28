@@ -27,6 +27,24 @@ namespace MarketplaceAPI.Controllers
             return Ok(Products);
         }
 
+        //get the products of other users (not the logged in one)
+        [HttpGet("Others")]
+        public IActionResult GetOthersAllProducts()
+        {
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            var otherItems = _db.Product.Where(a => a.User_Id != Reg_Id).ToList();
+            return Ok(otherItems);
+        }
+
+        //get the products of the logged in user
+        [HttpGet("User")]
+        public IActionResult GetAllUserProducts()
+        {
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            var Items = _db.Product.Where(a => a.User_Id == Reg_Id).ToList();
+            return Ok(Items);
+        }
+
         //Get Product With ID API
 
         [HttpGet("{id:int}")]
@@ -51,26 +69,6 @@ namespace MarketplaceAPI.Controllers
                 return NotFound();
             }
             return Ok(product);
-        }
-
-        //Delete a product from the Product's list
-        [HttpDelete("{id:int}")]
-        public IActionResult DeleteProduct(int id)
-        {
-            var instance = _db.Product.Find(id);
-
-            if (instance == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                _db.Remove(instance);
-                _db.SaveChanges();
-                var Products = _db.Product.ToList();
-
-                return Ok(Products);
-            }
         }
 
         [HttpPost]
@@ -102,7 +100,7 @@ namespace MarketplaceAPI.Controllers
 
 
         //Edit information of specific product
-        [HttpPut("Update/{id}")]
+        [HttpPut("{id}")]
         public IActionResult EditProduct(int id, ProductModel Up_pro)
         {
             if (_db.Product.Find(id) == null)
@@ -129,7 +127,45 @@ namespace MarketplaceAPI.Controllers
             return Ok("Not Updated");
         }
 
-        [HttpPost("AddToCart/{id}")]
+        //Delete a product from the Product's list
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            var instance = _db.Product.Find(id);
+
+            if (instance == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                _db.Remove(instance);
+                _db.SaveChanges();
+                var Products = _db.Product.ToList();
+
+                return Ok(Products);
+            }
+        }
+
+        [HttpPost("Transfer")]
+        public IActionResult Transfer(int id)
+        {
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            var product = _db.Product.Where(a => a.Id == id).Select(a => a).FirstOrDefault();
+            var product2 = new Product() { Name = product.Name, Price = product.Price, Image = product.Image, Category = product.Category, Quantity = product.Quantity, Description = product.Description, User_Id = product.User_Id, SecondaryUser = Reg_Id };
+            var products = _db.Product.Where(a => a.Name == product2.Name && a.User_Id == product2.User_Id && a.SecondaryUser == product2.SecondaryUser).Select(a => a).ToList();
+
+
+            if (products.Count() == 0)
+            {
+                _db.Add(product2);
+                _db.SaveChanges();
+            }
+
+            return Ok("Product Transfered Successfully");
+        }
+
+        [HttpPost("Cart/{id}")]
         public IActionResult AddToCart(int id)
         {
             int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
