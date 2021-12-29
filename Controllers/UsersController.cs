@@ -105,8 +105,7 @@ namespace MarketplaceAPI.Controllers
         }
 
         
-        [Route("Profile")]
-        [HttpGet("{id}")]
+        [HttpGet("Profile")]
         public IActionResult Profile(User usm)
         {
             int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");

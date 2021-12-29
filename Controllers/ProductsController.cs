@@ -28,14 +28,6 @@ namespace MarketplaceAPI.Controllers
         }
 
 
-        [HttpGet("{id}/Transactions")]
-        public IActionResult Trans(int id)
-        {
-            var trans = _db.Transaction.Where(p=>p.Id==id).ToList();
-            return Ok(trans);
-        }
-
-
         [HttpGet("Report")]
         public IActionResult PrintReport(int id)
         {
