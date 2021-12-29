@@ -41,8 +41,6 @@ namespace MarketplaceAPI.Controllers
             {
                 totalMoney += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
             }
-            //ViewBag.massage = totalMoney;
-
 
             return Ok(totalMoney);
         }
@@ -58,7 +56,7 @@ namespace MarketplaceAPI.Controllers
             {
                 totalMoney += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
             }
-            //ViewBag.massage = totalMoney;
+
             Payment pp;
             pp = _db.Payment.FirstOrDefault(s => s.User_Id == Reg_Id);
             pp.Money = userMoney - totalMoney;
@@ -68,7 +66,7 @@ namespace MarketplaceAPI.Controllers
             return Ok("Money Updated Successfully");
         }
 
-        [HttpPost("User/Done")]
+/*        [HttpPost("User/Done")]
         public IActionResult savepay()
         {
             Transaction tr;
@@ -86,7 +84,7 @@ namespace MarketplaceAPI.Controllers
             }
 
             return Ok("Payment is Done Successfully");
-        }
+        }*/
 
     }
 

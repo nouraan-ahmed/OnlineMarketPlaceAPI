@@ -28,15 +28,15 @@ namespace MarketplaceAPI.Controllers
         }
 
 
-        [HttpGet("Transactions")]
-        public IActionResult Trans()
+        [HttpGet("{id}/Transactions")]
+        public IActionResult Trans(int id)
         {
-            var trans = _db.Transaction.ToList();
+            var trans = _db.Transaction.Where(p=>p.Id==id).ToList();
             return Ok(trans);
         }
 
 
-        [HttpGet("Print Report")]
+        [HttpGet("Report")]
         public IActionResult PrintReport(int id)
         {
             if (_db.Product.Find(id) == null)
@@ -119,7 +119,6 @@ namespace MarketplaceAPI.Controllers
             p.Description = obj.Description;
             // p.User_Id = _db.User.Where(p => p.Id == User_id).Select(o => o.Id).FirstOrDefault();
             p.User_Id = 2;
-            p.Id = obj.Id;
             p.Image = "https://www.lg.com/lg5-common/images/common/product-default-list-350.jpg";
 
             if (ModelState.IsValid)

@@ -8,13 +8,10 @@ namespace MarketplaceAPI.Models
 {
     public class PaymentVM
     {
-        [Key]
-        public int Id { get; set; }
         public string CardHolderName { get; set; }
 
         public int CardNumber { get; set; }
 
-        //[DataType(DataType.Date)]
         public string ExpDate { get; set; }
 
         public int CVcode { get; set; }

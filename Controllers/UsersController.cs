@@ -19,7 +19,7 @@ namespace MarketplaceAPI.Controllers
         }
         [HttpPost]
         [Route("Register")]
-        public IActionResult Register([FromBody]User usm)
+        public IActionResult Register([FromBody]RegisterModel usm)
         {
             User us = new User
             {
@@ -59,17 +59,24 @@ namespace MarketplaceAPI.Controllers
 
         }
 
-        [HttpGet("Show Users")]
-        public ActionResult ShowUsers()
+        [HttpGet]
+        public ActionResult GetUsers()
         {
             var users = _db.User.ToList();
             return Ok(users);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult GetUser(int id)
+        {
+            var user = _db.User.Where(e=>e.Id==id).FirstOrDefault();
+            return Ok(user);
+        }
+
 
         [HttpPost]
         [Route("Login")]
-        public ActionResult Login(User usm)
+        public ActionResult Login(UserModel usm)
         {
             var exist = _db.User.ToList().Any(i => i.Email == usm.Email);
             HttpContext.Session.SetString("User_Email", usm.Email);
@@ -94,7 +101,6 @@ namespace MarketplaceAPI.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.SetInt32("Reg_Id", 0);
-            HttpContext.Session.SetString("User_Email", null);
             return Ok("Logged Out Successfully");
         }
         [HttpPost]
