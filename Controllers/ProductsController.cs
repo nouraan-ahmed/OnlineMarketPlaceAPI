@@ -100,8 +100,8 @@ namespace MarketplaceAPI.Controllers
         [HttpPost]
         public IActionResult AddProduct(ProductModel obj)
         {
-            // string User_Email = HttpContext.Session.GetString("User_Email");
-            // int User_id = _db.User.Where(p => p.Email == User_Email).Select(o => o.Id).FirstOrDefault();
+            string User_Email = HttpContext.Session.GetString("User_Email");
+            int User_id = _db.User.Where(p => p.Email == User_Email).Select(o => o.Id).FirstOrDefault();
 
             Product p = new Product();
             p.Name = obj.Name;
@@ -109,8 +109,8 @@ namespace MarketplaceAPI.Controllers
             p.Quantity = obj.Quantity;
             p.Category = obj.Category;
             p.Description = obj.Description;
-            // p.User_Id = _db.User.Where(p => p.Id == User_id).Select(o => o.Id).FirstOrDefault();
-            p.User_Id = 2;
+            p.User_Id = _db.User.Where(p => p.Id == User_id).Select(o => o.Id).FirstOrDefault();
+            //p.User_Id = 2;
             p.Image = "https://www.lg.com/lg5-common/images/common/product-default-list-350.jpg";
 
             if (ModelState.IsValid)
@@ -172,14 +172,19 @@ namespace MarketplaceAPI.Controllers
             }
         }
 
-        [HttpPost("Transfer")]
+        /*[HttpPost("Transfer/{id}")]
         public IActionResult Transfer(int id)
         {
             int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
             var product = _db.Product.Where(a => a.Id == id).Select(a => a).FirstOrDefault();
             var product2 = new Product() { Name = product.Name, Price = product.Price, Image = product.Image, Category = product.Category, Quantity = product.Quantity, Description = product.Description, User_Id = product.User_Id, SecondaryUser = Reg_Id };
             var products = _db.Product.Where(a => a.Name == product2.Name && a.User_Id == product2.User_Id && a.SecondaryUser == product2.SecondaryUser).Select(a => a).ToList();
-
+            var user = _db.User.Find(product.User_Id);
+            user.Wallet += product.Price;
+            var user2 = _db.User.Find(Reg_Id);
+            //user2.Wallet -= product.Price;
+            var payment = _db.Payment.Find(Reg_Id);
+            user2.Wallet -= payment.Money;
 
             if (products.Count() == 0)
             {
@@ -188,7 +193,7 @@ namespace MarketplaceAPI.Controllers
             }
 
             return Ok("Product Transfered Successfully");
-        }
+        }*/
 
         [HttpPost("Cart/{id}")]
         public IActionResult AddToCart(int id)

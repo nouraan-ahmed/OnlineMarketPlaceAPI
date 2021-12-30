@@ -19,10 +19,11 @@ namespace MarketplaceAPI.Controllers
         }
 
 
-        [HttpPost("Deposit/{id}")]
-        public IActionResult Deposit(int id, int money)
+        [HttpPost("Deposit")]
+        public IActionResult Deposit(int money)
         {
-            var user = _db.User.Find(id);
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            var user = _db.User.Find(Reg_Id);
             user.Wallet += money;
             _db.Update(user);
             _db.SaveChanges();
@@ -39,52 +40,19 @@ namespace MarketplaceAPI.Controllers
             double totalMoney = 0;
             for (var i = 0; i < products.Count(); i++)
             {
+                int seller_id = _db.Transaction.Where(f => f.Product_Id == products[i]).Select(d => d.Seller_Id).FirstOrDefault();
+                var user2 = _db.User.Find(seller_id);
+                user2.Wallet += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
+                _db.Update(user2);
+                _db.SaveChanges();
                 totalMoney += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
             }
-
+            var user = _db.User.Find(Reg_Id);
+            user.Wallet -= totalMoney;
+            _db.Update(user);
+            _db.SaveChanges();
             return Ok(totalMoney);
         }
-
-        [HttpPost("User")]
-        public IActionResult Payment(PaymentVM pvm)
-        {
-            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
-            var products = (from p in _db.Transaction select p).Where(f => f.User_Id == Reg_Id).Select(h => h.Product_Id).ToList();
-            double userMoney = _db.Payment.Where(v => v.Id == Reg_Id).Select(d => d.Money).FirstOrDefault();
-            double totalMoney = 0;
-            for (var i = 0; i < products.Count(); i++)
-            {
-                totalMoney += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
-            }
-
-            Payment pp;
-            pp = _db.Payment.FirstOrDefault(s => s.User_Id == Reg_Id);
-            pp.Money = userMoney - totalMoney;
-            _db.Update(pp);
-            _db.SaveChanges();
-
-            return Ok("Money Updated Successfully");
-        }
-
-/*        [HttpPost("User/Done")]
-        public IActionResult savepay()
-        {
-            Transaction tr;
-            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
-            var objList = _db.Transaction.Where(p => p.User_Id == Reg_Id).ToList();
-            var productList = new List<Transaction>();
-
-            for (var i = 0; i < objList.Count(); i++)
-            {
-                tr = _db.Transaction.FirstOrDefault(s => s.Status == "Pending");
-                tr.Status = "Done";
-
-                _db.Update(tr);
-                _db.SaveChanges();
-            }
-
-            return Ok("Payment is Done Successfully");
-        }*/
 
     }
 

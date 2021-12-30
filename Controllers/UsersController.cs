@@ -106,7 +106,7 @@ namespace MarketplaceAPI.Controllers
 
         
         [HttpGet("Profile")]
-        public IActionResult Profile(User usm)
+        public IActionResult Profile()
         {
             int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
             string User_Email = HttpContext.Session.GetString("User_Email");
@@ -114,7 +114,7 @@ namespace MarketplaceAPI.Controllers
             var User_status = _db.Product.Where(p => p.User_Id == Reg_Id).Select(o => o.Status).FirstOrDefault();
             // ViewData["User_status"] = User_status;
             // ViewBag.status = ViewData["User_status"];
-            User Us = new User();
+            Profile Us = new Profile();
             Us.Name = _db.User.Where(l => l.Id == Reg_Id).Select(i => i.Name).FirstOrDefault();
             Us.Phone = _db.User.Where(l => l.Id == Reg_Id).Select(i => i.Phone).FirstOrDefault();
             Us.Email = _db.User.Where(l => l.Id == Reg_Id).Select(i => i.Email).FirstOrDefault();
