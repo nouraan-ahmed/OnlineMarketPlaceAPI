@@ -40,14 +40,26 @@ namespace MarketplaceAPI.Controllers
             double totalMoney = 0;
             for (var i = 0; i < products.Count(); i++)
             {
+                totalMoney += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
+            }
+            var user = _db.User.Find(Reg_Id);
+            if (user.Wallet < totalMoney)
+            {
+                return Ok("you don't have enough monet to pay");
+            }
+            for (var i = 0; i < products.Count(); i++)
+            {
                 int seller_id = _db.Transaction.Where(f => f.Product_Id == products[i]).Select(d => d.Seller_Id).FirstOrDefault();
                 var user2 = _db.User.Find(seller_id);
                 user2.Wallet += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
                 _db.Update(user2);
                 _db.SaveChanges();
-                totalMoney += _db.Product.Where(v => v.Id == products[i]).Select(d => d.Price).FirstOrDefault();
+                //int product_p_id = _db.Product.Where(v => v.Id == products[i]).Select(d => d.Id).FirstOrDefault();
+                //var product = _db.Product.Find(product_p_id);
+                //product.Status = 0;
+                //_db.Update(product);
+                //_db.SaveChanges();
             }
-            var user = _db.User.Find(Reg_Id);
             user.Wallet -= totalMoney;
             _db.Update(user);
             _db.SaveChanges();

@@ -67,7 +67,21 @@ namespace MarketplaceAPI.Controllers
         public IActionResult GetAllUserProducts()
         {
             int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
-            var Items = _db.Product.Where(a => a.User_Id == Reg_Id).ToList();
+            var Items = _db.Product.Where(a => a.User_Id == Reg_Id && a.Status == 0).ToList();
+            return Ok(Items);
+        }
+        [HttpGet("PurchasdProducts")]
+        public IActionResult GetPurchasdProducts()
+        {
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            var Items = _db.Product.Where(a => a.User_Id == Reg_Id && a.Status == 1).ToList();
+            return Ok(Items);
+        }
+        [HttpGet("OtherUsersProduct")]
+        public IActionResult GetOtherUsersProduct()
+        {
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            var Items = _db.Product.Where(a => a.SecondaryUser == Reg_Id).ToList();
             return Ok(Items);
         }
 
@@ -195,6 +209,17 @@ namespace MarketplaceAPI.Controllers
             return Ok("Product Transfered Successfully");
         }*/
 
+        [HttpPost("SellProductOfOther/{id}")]
+        public IActionResult SellProductOfOther(int id)
+        {
+            int Reg_Id = (int)HttpContext.Session.GetInt32("Reg_Id");
+            var product = _db.Product.ToList().Where(p => p.Id == id).FirstOrDefault();
+            product.SecondaryUser = Reg_Id;
+            _db.Update(product);
+            _db.SaveChanges();
+
+            return  Ok("Sucessfully added to My Store");
+        }
         [HttpPost("Cart/{id}")]
         public IActionResult AddToCart(int id)
         {
@@ -225,12 +250,11 @@ namespace MarketplaceAPI.Controllers
             // pro.Id = id;
             pro.Image = "https://www.lg.com/lg5-common/images/common/product-default-list-350.jpg";
             pro.User_Id = Reg_Id;
-
+            pro.Status = 1;
             _db.Add(pro);
             _db.SaveChanges();
 
-            return  Ok("Sucessfully added to cart");
+            return Ok("Sucessfully added to cart");
         }
-
     }
 }
